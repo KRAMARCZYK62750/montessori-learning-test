@@ -1,0 +1,9 @@
+# Composer dependencies
+/vendor/
+/composer.lock
+
+# Application data
+/data/
+
+# Log files
+*.log
