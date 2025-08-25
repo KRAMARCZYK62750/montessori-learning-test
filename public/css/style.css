@@ -1,0 +1,123 @@
+@import url('https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap');
+
+body {
+    font-family: 'Helvetica Neue', sans-serif;
+    background-color: #f0f8ff; /* AliceBlue */
+    color: #333;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    overflow: hidden;
+}
+
+#game-container {
+    width: 95vw;
+    height: 95vh;
+    background: #ffffff;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.title {
+    font-family: 'Fredoka One', cursive;
+    text-align: center;
+    color: #4a4a4a;
+    padding: 20px;
+    margin: 0;
+    font-size: 2.5rem;
+}
+
+#stage {
+    flex-grow: 1;
+    background-color: #e8f4fd;
+    border-bottom: 5px solid #d0e8fa;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.instructions {
+    color: #a0c8e0;
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+#palette {
+    height: 150px;
+    background-color: #fafafa;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+    overflow-x: auto;
+}
+
+.letter-character {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: 'Fredoka One', cursive;
+    font-size: 3rem;
+    color: white;
+    cursor: grab;
+    user-select: none;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+}
+
+.letter-character:hover {
+    transform: scale(1.1);
+    box-shadow: 0 8px 15px rgba(0,0,0,0.2);
+}
+
+.letter-character.dragging {
+    cursor: grabbing;
+    opacity: 0.7;
+    transform: scale(1.2);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+    z-index: 1000;
+}
+
+/* --- Animations --- */
+.pulse {
+    animation: pulse-animation 0.5s ease-out;
+}
+
+@keyframes pulse-animation {
+    0% {
+        transform: scale(1.1);
+        box-shadow: 0 8px 15px rgba(0,0,0,0.2);
+    }
+    50% {
+        transform: scale(1.3);
+        box-shadow: 0 0 25px #fcc419; /* Yellow glow */
+    }
+    100% {
+        transform: scale(1.1);
+        box-shadow: 0 8px 15px rgba(0,0,0,0.2);
+    }
+}
+
+
+/* --- Character Colors --- */
+.color-1 { background-color: #ff6b6b; } /* Red */
+.color-2 { background-color: #f06595; } /* Pink */
+.color-3 { background-color: #cc5de8; } /* Grape */
+.color-4 { background-color: #845ef7; } /* Violet */
+.color-5 { background-color: #5c7cfa; } /* Indigo */
+.color-6 { background-color: #339af0; } /* Blue */
+.color-7 { background-color: #22b8cf; } /* Cyan */
+.color-8 { background-color: #20c997; } /* Teal */
+.color-9 { background-color: #51cf66; } /* Green */
+.color-10 { background-color: #fcc419; } /* Yellow */
+.color-11 { background-color: #ff922b; } /* Orange */
