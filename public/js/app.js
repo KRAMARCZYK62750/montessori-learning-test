@@ -8,17 +8,19 @@ document.addEventListener('DOMContentLoaded', () => {
     let draggedElement = null;
 
     const PHONETIC_SOUNDS = {
-        'a': 'a', 'e': 'eu', 'i': 'i', 'o': 'o', 'u': 'ou', 'y': 'i', 'b': 'beu', 'c': 'keu', 'd': 'deu', 'f': 'feu', 'g': 'geu', 'h': 'acheu', 'j': 'jeu', 'k': 'keu', 'l': 'leu', 'm': 'meu', 'n': 'neu', 'p': 'peu', 'q': 'keu', 'r': 'reu', 's': 'sseu', 't': 'teu', 'v': 'veu', 'w': 'weu', 'x': 'ixeu', 'z': 'zeu'
+        'a': 'a', 'e': 'e', 'i': 'i', 'o': 'o', 'u': 'u', 'y': 'i', 'b': 'be', 'c': 'ke', 'd': 'de', 'f': 'fe', 'g': 'ge', 'h': 'ache', 'j': 'je', 'k': 'ke', 'l': 'le', 'm': 'me', 'n': 'ne', 'p': 'pe', 'q': 'ke', 'r': 're', 's': 'se', 't': 'te', 'v': 've', 'w': 'we', 'x': 'kse', 'z': 'ze'
     };
 
     const FRENCH_SYLLABLES = {
-        'ba': 'ba', 'ca': 'ka', 'da': 'da', 'fa': 'fa', 'ga': 'ga', 'ha': 'ha', 'ja': 'ja', 'ka': 'ka', 'la': 'la', 'ma': 'ma', 'na': 'na', 'pa': 'pa', 'ra': 'ra', 'sa': 'sa', 'ta': 'ta', 'va': 'va', 'wa': 'wa', 'za': 'za',
-        'be': 'beu', 'ce': 'seu', 'de': 'deu', 'fe': 'feu', 'ge': 'jeu', 'he': 'heu', 'je': 'jeu', 'ke': 'keu', 'le': 'leu', 'me': 'meu', 'ne': 'neu', 'pe': 'peu', 're': 'reu', 'se': 'seu', 'te': 'teu', 've': 'veu', 'ze': 'zeu',
-        'bi': 'bi', 'ci': 'si', 'di': 'di', 'fi': 'fi', 'gi': 'ji', 'hi': 'hi', 'ji': 'ji', 'ki': 'ki', 'li': 'li', 'mi': 'mi', 'ni': 'ni', 'pi': 'pi', 'ri': 'ri', 'si': 'si', 'ti': 'ti', 'vi': 'vi', 'zi': 'zi',
-        'bo': 'bo', 'co': 'ko', 'do': 'do', 'fo': 'fo', 'go': 'go', 'ho': 'ho', 'jo': 'jo', 'ko': 'ko', 'lo': 'lo', 'mo': 'mo', 'no': 'no', 'po': 'po', 'ro': 'ro', 'so': 'so', 'to': 'to', 'vo': 'vo', 'zo': 'zo',
-        'bu': 'bu', 'cu': 'ku', 'du': 'du', 'fu': 'fu', 'gu': 'gu', 'hu': 'hu', 'ju': 'ju', 'ku': 'ku', 'lu': 'lu', 'mu': 'mu', 'nu': 'nu', 'pu': 'pu', 'ru': 'ru', 'su': 'su', 'tu': 'tu', 'vu': 'vu', 'zu': 'zu',
-        'man': 'man', 'sac': 'sac', 'lac': 'lac'
+        'ba': 'ba', 'ca': 'ka', 'da': 'da', 'fa': 'fa', 'ga': 'ga', 'ha': 'a', 'ja': 'ja', 'ka': 'ka', 'la': 'la', 'ma': 'ma', 'na': 'na', 'pa': 'pa', 'ra': 'ra', 'sa': 'sa', 'ta': 'ta', 'va': 'va', 'wa': 'wa', 'za': 'za', 'le': 'le',
+        'be': 'be', 'ce': 'se', 'de': 'de', 'fe': 'fe', 'ge': 'je', 'he': 'e', 'je': 'je', 'ke': 'ke', 'me': 'me', 'ne': 'ne', 'pe': 'pe', 're': 're', 'se': 'se', 'te': 'te', 've': 've', 'ze': 'ze',
+        'bi': 'bi', 'ci': 'si', 'di': 'di', 'fi': 'fi', 'gi': 'ji', 'hi': 'i', 'ji': 'ji', 'ki': 'ki', 'li': 'li', 'mi': 'mi', 'ni': 'ni', 'pi': 'pi', 'ri': 'ri', 'si': 'si', 'ti': 'ti', 'vi': 'vi', 'zi': 'zi',
+        'bo': 'bo', 'co': 'ko', 'do': 'do', 'fo': 'fo', 'go': 'go', 'ho': 'o', 'jo': 'jo', 'ko': 'ko', 'lo': 'lo', 'mo': 'mo', 'no': 'no', 'po': 'po', 'ro': 'ro', 'so': 'so', 'to': 'to', 'vo': 'vo', 'zo': 'zo',
+        'bu': 'bu', 'cu': 'ku', 'du': 'du', 'fu': 'fu', 'gu': 'gu', 'hu': 'u', 'ju': 'ju', 'ku': 'ku', 'lu': 'lu', 'mu': 'mu', 'nu': 'nu', 'pu': 'pu', 'ru': 'ru', 'su': 'su', 'tu': 'tu', 'vu': 'vu', 'zu': 'zu',
+        'man': 'man', 'mon': 'mon', 'men': 'men', 'dan': 'dan', 'don': 'don', 'den': 'den', 'lan': 'lan', 'lon': 'lon', 'len': 'len', 'pas': 'pas', 'par': 'par', 'sol': 'sol', 'sur': 'sur', 'fin': 'fin', 'fon': 'fon', 'fil': 'fil', 'jar': 'jar', 'din': 'din', 'sac': 'sac', 'lac': 'lac'
     };
+
+    const WORDS = { 'maman': 'maman', 'jardin': 'jardin' };
 
     const createLetterPalette = () => {
         alphabet.forEach(letter => {
@@ -33,101 +35,42 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     };
 
-    const createSyllableConnection = (elements, syllable) => {
-        if (elements.length < 2) return;
-        const sortedElements = [...elements].sort((a, b) => a.getBoundingClientRect().left - b.getBoundingClientRect().left);
-        const first = sortedElements[0];
-        const last = sortedElements[sortedElements.length - 1];
-        const connection = document.createElement('div');
-        connection.style.position = 'absolute';
-        connection.style.height = '4px';
-        connection.style.backgroundColor = '#fcc419';
-        connection.style.borderRadius = '2px';
-        connection.style.zIndex = '999';
-        connection.className = 'syllable-connection';
-        const rect1 = first.getBoundingClientRect();
-        const rect2 = last.getBoundingClientRect();
-        const stageRect = stage.getBoundingClientRect();
-        const x1 = rect1.left - stageRect.left + rect1.width / 2;
-        const y1 = rect1.top - stageRect.top + rect1.height / 2;
-        const x2 = rect2.left - stageRect.left + rect2.width / 2;
-        const y2 = rect2.top - stageRect.top + rect2.height / 2;
-        const length = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
-        const angle = Math.atan2(y2 - y1, x2 - x1) * 180 / Math.PI;
-        connection.style.width = `${length}px`;
-        connection.style.left = `${x1}px`;
-        connection.style.top = `${y1 - 2}px`;
-        connection.style.transform = `rotate(${angle}deg)`;
-        connection.style.transformOrigin = '0 50%';
-        stage.appendChild(connection);
-        setTimeout(() => { if (connection.parentNode) connection.parentNode.removeChild(connection); }, 2000);
+    const audioCache = {};
+    const speakPhonetic = (soundName) => {
+        if (!soundName) return;
+        if (audioCache[soundName]) {
+            audioCache[soundName].currentTime = 0;
+            audioCache[soundName].play();
+        } else {
+            const audio = new Audio(`/sounds/${soundName}.mp3`);
+            audioCache[soundName] = audio;
+            audio.play().catch(error => console.error(`Could not play sound: ${soundName}`, error));
+        }
+    };
+
+    const triggerGroupAnimation = (group) => {
+        group.classList.add('pulse');
+        setTimeout(() => group.classList.remove('pulse'), 1000);
+    };
+
+    const createSyllableGroup = (elements, syllable, position) => {
+        const group = document.createElement('div');
+        group.className = 'syllable-group';
+        group.dataset.syllable = syllable;
+        group.style.position = 'absolute';
+        group.style.left = `${position.x}px`;
+        group.style.top = `${position.y}px`;
+        group.draggable = true;
+        group.id = `syllable-${Date.now()}`;
+        group.style.display = 'inline-flex';
         elements.forEach(el => {
-            el.classList.add('connected');
-            el.dataset.syllable = syllable;
+            el.style.position = 'static';
+            el.draggable = false;
+            el.classList.add('in-group');
+            group.appendChild(el);
         });
-    };
-
-    const speakPhonetic = (text, isLetter = false) => {
-        if ('speechSynthesis' in window) {
-            window.speechSynthesis.cancel();
-            const utterance = new SpeechSynthesisUtterance();
-            utterance.text = isLetter ? (PHONETIC_SOUNDS[text.toLowerCase()] || text) : text;
-            utterance.rate = isLetter ? 0.7 : 0.8;
-            utterance.lang = 'fr-FR';
-            utterance.pitch = 1.2;
-            window.speechSynthesis.speak(utterance);
-        }
-    };
-
-    const triggerSyllableAnimation = (elements) => {
-        elements.forEach(el => {
-            el.classList.add('pulse');
-            el.style.transform = 'scale(1.3)';
-        });
-        setTimeout(() => {
-            elements.forEach(el => {
-                el.classList.remove('pulse');
-                el.style.transform = '';
-            });
-        }, 1000);
-    };
-
-    const checkSyllableCombinations = (droppedElement) => {
-        const allCharsOnStage = Array.from(stage.querySelectorAll('.letter-character:not(.connected)'));
-        if (allCharsOnStage.length >= 3) {
-            const otherLetters = allCharsOnStage.filter(el => el.id !== droppedElement.id);
-            for (let i = 0; i < otherLetters.length; i++) {
-                for (let j = i + 1; j < otherLetters.length; j++) {
-                    const letterA = otherLetters[i];
-                    const letterB = otherLetters[j];
-                    if (getDistance(droppedElement, letterA) < 120 && getDistance(droppedElement, letterB) < 120 && getDistance(letterA, letterB) < 120) {
-                        const triplet = [droppedElement, letterA, letterB].sort((a, b) => a.getBoundingClientRect().left - b.getBoundingClientRect().left);
-                        const syllable = triplet.map(el => el.dataset.letter).join('');
-                        if (FRENCH_SYLLABLES[syllable]) {
-                            console.log(`Syllabe (3 lettres) détectée: ${syllable}`);
-                            triggerSyllableAnimation(triplet);
-                            createSyllableConnection(triplet, syllable);
-                            setTimeout(() => speakPhonetic(FRENCH_SYLLABLES[syllable]), 300);
-                            return;
-                        }
-                    }
-                }
-            }
-        }
-        const uncombinedChars = allCharsOnStage.filter(el => el.id !== droppedElement.id);
-        for (const char of uncombinedChars) {
-            if (getDistance(droppedElement, char) < 120) {
-                const pair = [char, droppedElement].sort((a, b) => a.getBoundingClientRect().left - b.getBoundingClientRect().left);
-                const syllable = pair.map(el => el.dataset.letter).join('');
-                if (FRENCH_SYLLABLES[syllable]) {
-                    console.log(`Syllabe (2 lettres) détectée: ${syllable}`);
-                    triggerSyllableAnimation(pair);
-                    createSyllableConnection(pair, syllable);
-                    setTimeout(() => speakPhonetic(FRENCH_SYLLABLES[syllable]), 300);
-                    return;
-                }
-            }
-        }
+        stage.appendChild(group);
+        return group;
     };
 
     const getDistance = (elem1, elem2) => {
@@ -138,14 +81,125 @@ document.addEventListener('DOMContentLoaded', () => {
         return Math.sqrt(dx * dx + dy * dy);
     };
 
+    const checkSyllableFormation = (droppedElement) => {
+        console.log(`--- Checking combinations for dropped: ${droppedElement.dataset.letter} ---`);
+        const allSingleLetters = Array.from(stage.querySelectorAll('.letter-character:not(.in-group)'));
+        console.log('Available single letters:', allSingleLetters.map(el => el.dataset.letter));
+
+        // 1. Try direct 3-letter CVC
+        console.log('Checking for 3-letter combinations...');
+        if (allSingleLetters.length >= 3) {
+            const otherLetters = allSingleLetters.filter(el => el.id !== droppedElement.id);
+            for (let i = 0; i < otherLetters.length; i++) {
+                for (let j = i + 1; j < otherLetters.length; j++) {
+                    const letterA = otherLetters[i];
+                    const letterB = otherLetters[j];
+                    if (getDistance(droppedElement, letterA) < 120 && getDistance(droppedElement, letterB) < 120 && getDistance(letterA, letterB) < 120) {
+                        const triplet = [droppedElement, letterA, letterB].sort((a, b) => a.getBoundingClientRect().left - b.getBoundingClientRect().left);
+                        const syllable = triplet.map(el => el.dataset.letter).join('');
+                        console.log('Testing 3-letter combo:', syllable);
+                        if (FRENCH_SYLLABLES[syllable]) {
+                            console.log(`SUCCESS: Found 3-letter syllable: ${syllable}`);
+                            const group = createSyllableGroup(triplet, syllable, { x: triplet[0].offsetLeft, y: triplet[0].offsetTop });
+                            triggerGroupAnimation(group);
+                            speakPhonetic(syllable);
+                            setTimeout(() => speakPhonetic('bravo'), 800);
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+
+        // 2. Try sequential CVC (append to CV group)
+        console.log('Checking for sequential 3-letter combinations...');
+        const syllableGroups = Array.from(stage.querySelectorAll('.syllable-group'));
+        console.log(`Found ${syllableGroups.length} syllable groups on stage.`);
+        for (const group of syllableGroups) {
+            console.log(`Checking group: ${group.dataset.syllable}`);
+            if (getDistance(droppedElement, group) < 200) { // Increased distance threshold
+                const groupSyllable = group.dataset.syllable;
+                const droppedLetter = droppedElement.dataset.letter;
+                console.log(`Testing adding '${droppedLetter}' to group '${groupSyllable}'`);
+
+                const newSyllableRight = groupSyllable + droppedLetter;
+                if (FRENCH_SYLLABLES[newSyllableRight]) {
+                    console.log(`SUCCESS: Found sequential syllable: ${newSyllableRight}`);
+                    group.appendChild(droppedElement);
+                    group.dataset.syllable = newSyllableRight;
+                    triggerGroupAnimation(group);
+                    speakPhonetic(newSyllableRight);
+                    setTimeout(() => speakPhonetic('bravo'), 800);
+                    return true;
+                }
+                const newSyllableLeft = droppedLetter + groupSyllable;
+                 if (FRENCH_SYLLABLES[newSyllableLeft]) {
+                    console.log(`SUCCESS: Found sequential syllable: ${newSyllableLeft}`);
+                    group.insertBefore(droppedElement, group.firstChild);
+                    group.dataset.syllable = newSyllableLeft;
+                    triggerGroupAnimation(group);
+                    speakPhonetic(newSyllableLeft);
+                    setTimeout(() => speakPhonetic('bravo'), 800);
+                    return true;
+                }
+            }
+        }
+
+        // 3. Try 2-letter CV
+        console.log('Checking for 2-letter combinations...');
+        for (const staticLetter of allSingleLetters.filter(el => el.id !== droppedElement.id)) {
+            if (getDistance(droppedElement, staticLetter) < 120) {
+                const pair = [staticLetter, droppedElement].sort((a, b) => a.getBoundingClientRect().left - b.getBoundingClientRect().left);
+                const syllable = pair.map(el => el.dataset.letter).join('');
+                console.log('Testing 2-letter combo:', syllable);
+                if (FRENCH_SYLLABLES[syllable]) {
+                    console.log(`SUCCESS: Found 2-letter syllable: ${syllable}`);
+                    const group = createSyllableGroup(pair, syllable, { x: pair[0].offsetLeft, y: pair[0].offsetTop });
+                    triggerGroupAnimation(group);
+                    speakPhonetic(syllable);
+                    setTimeout(() => speakPhonetic('bravo'), 800);
+                    return true;
+                }
+            }
+        }
+        console.log('--- No combination found ---');
+        return false;
+    };
+
+    const checkWordFormation = (droppedGroup) => {
+        const droppedSyllable = droppedGroup.dataset.syllable;
+        const stageElements = Array.from(stage.querySelectorAll('.syllable-group'));
+        for (const group of stageElements) {
+            if (group.id === droppedGroup.id) continue;
+            if (getDistance(droppedGroup, group) < 150) {
+                const pair = [group, droppedGroup].sort((a, b) => a.getBoundingClientRect().left - b.getBoundingClientRect().left);
+                const word = pair.map(el => el.dataset.syllable).join('');
+                if (WORDS[word]) {
+                    const allLetters = [...pair[0].children, ...pair[1].children];
+                    const newPosition = { x: pair[0].offsetLeft, y: pair[0].offsetTop };
+                    const newWordGroup = createSyllableGroup(allLetters, word, newPosition);
+                    newWordGroup.classList.add('word-group');
+                    stage.removeChild(pair[0]);
+                    stage.removeChild(pair[1]);
+                    speakPhonetic(word);
+                    triggerGroupAnimation(newWordGroup);
+                    setTimeout(() => speakPhonetic('bravo'), 800);
+                    return true;
+                }
+            }
+        }
+        return false;
+    };
+
     document.addEventListener('dragstart', (event) => {
-        if (event.target.classList.contains('letter-character')) {
-            draggedElement = event.target;
-            setTimeout(() => event.target.classList.add('dragging'), 0);
+        const target = event.target;
+        if (target.classList.contains('letter-character') || target.classList.contains('syllable-group')) {
+            draggedElement = target;
+            setTimeout(() => target.classList.add('dragging'), 0);
         }
     });
 
-    document.addEventListener('dragend', (event) => {
+    document.addEventListener('dragend', () => {
         if (draggedElement) draggedElement.classList.remove('dragging');
         draggedElement = null;
     });
@@ -155,36 +209,57 @@ document.addEventListener('DOMContentLoaded', () => {
     stage.addEventListener('drop', (event) => {
         event.preventDefault();
         if (!draggedElement) return;
+
+        const isFromPalette = draggedElement.id.startsWith('palette-');
         let elementToDrop = draggedElement;
-        if (draggedElement.id.startsWith('palette-')) {
+
+        if (isFromPalette) {
             elementToDrop = draggedElement.cloneNode(true);
             elementToDrop.id = `stage-${Date.now()}`;
             elementToDrop.dataset.letter = draggedElement.dataset.letter;
             stage.appendChild(elementToDrop);
-        } else if (draggedElement.classList.contains('connected')) {
-            const syllable = draggedElement.dataset.syllable;
-            const connectedLetters = document.querySelectorAll(`[data-syllable="${syllable}"]`);
-            connectedLetters.forEach(el => {
-                el.classList.remove('connected');
-                delete el.dataset.syllable;
+        } else if (elementToDrop.classList.contains('letter-character') && elementToDrop.closest('.syllable-group')) {
+            // Logic to break up a group
+            const parentGroup = elementToDrop.closest('.syllable-group');
+            const letters = Array.from(parentGroup.children);
+            const groupRect = parentGroup.getBoundingClientRect();
+            stage.removeChild(parentGroup);
+            letters.forEach((letter, index) => {
+                letter.classList.remove('in-group');
+                letter.style.position = 'absolute';
+                letter.style.left = `${groupRect.left - stage.getBoundingClientRect().left + (index * 40)}px`;
+                letter.style.top = `${groupRect.top - stage.getBoundingClientRect().top}px`;
+                stage.appendChild(letter);
             });
-            // Also remove the connection line
-            const connectionLine = document.querySelector('.syllable-connection');
-            if(connectionLine) connectionLine.remove();
         }
+
         const stageRect = stage.getBoundingClientRect();
         elementToDrop.style.position = 'absolute';
-        elementToDrop.style.left = `${event.clientX - stageRect.left - (elementToDrop.offsetWidth / 2)}px`;
-        elementToDrop.style.top = `${event.clientY - stageRect.top - (elementToDrop.offsetHeight / 2)}px`;
+        elementToDrop.style.left = `${event.clientX - stageRect.left - elementToDrop.offsetWidth / 2}px`;
+        elementToDrop.style.top = `${event.clientY - stageRect.top - elementToDrop.offsetHeight / 2}px`;
+
+        // Use a timeout to ensure the DOM is updated before checking for combinations
+        setTimeout(() => {
+            if (elementToDrop.classList.contains('syllable-group')) {
+                checkWordFormation(elementToDrop);
+            } else if (elementToDrop.classList.contains('letter-character')) {
+                checkSyllableFormation(elementToDrop);
+            }
+        }, 300);
+
         const instructions = stage.querySelector('.instructions');
         if (instructions) instructions.style.display = 'none';
-        setTimeout(() => checkSyllableCombinations(elementToDrop), 100);
     });
 
     document.addEventListener('click', (event) => {
         if (event.target.classList.contains('letter-character')) {
+            if (event.target.classList.contains('in-group')) {
+                const parentGroup = event.target.closest('.syllable-group');
+                if (parentGroup) speakPhonetic(parentGroup.dataset.syllable);
+                return;
+            }
             const letter = event.target.dataset.letter || event.target.textContent.toLowerCase();
-            speakPhonetic(letter, true);
+            speakPhonetic(PHONETIC_SOUNDS[letter]);
         }
     });
 
