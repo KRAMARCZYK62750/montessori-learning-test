@@ -8,44 +8,236 @@ document.addEventListener('DOMContentLoaded', () => {
     let draggedElement = null;
 
     /**
-     * Generates the letter characters and places them in the palette.
+     * TABLE PHONÉTIQUE FRANÇAISE CORRECTE
+     * Mapping des lettres vers des sons courts et fusionnables.
+     */
+    const PHONETIC_SOUNDS = {
+        // Voyelles - sons purs
+        'a': 'a', 'e': 'e', 'i': 'i', 'o': 'o', 'u': 'u', 'y': 'i',
+
+        // Consonnes - sons courts pour la fusion
+        'b': 'be', 'c': 'ke', 'd': 'de', 'f': 'fe', 'g': 'ge',
+        'h': 'ache', // H est muet dans les syllabes mais a un nom
+        'j': 'je', 'k': 'ke', 'l': 'le', 'm': 'me',
+        'n': 'ne', 'p': 'pe', 'q': 'ke', 'r': 're', 's': 'se',
+        't': 'te', 'v': 've', 'w': 'we', 'x': 'kse', 'z': 'ze'
+    };
+
+    /**
+     * SYLLABES FRANÇAISES COMPLÈTES
+     * Vraies combinaisons phonétiques consonne + voyelle
+     */
+    const FRENCH_SYLLABLES = {
+        // Syllabes avec A
+        'ba': 'ba', 'ca': 'ka', 'da': 'da', 'fa': 'fa', 'ga': 'ga',
+        'ha': 'a', 'ja': 'ja', 'ka': 'ka', 'la': 'la', 'ma': 'ma',
+        'na': 'na', 'pa': 'pa', 'ra': 'ra', 'sa': 'sa', 'ta': 'ta',
+        'va': 'va', 'wa': 'wa', 'za': 'za',
+
+        // Syllabes avec E
+        'be': 'be', 'ce': 'se', 'de': 'de', 'fe': 'fe', 'ge': 'je',
+        'he': 'e', 'je': 'je', 'ke': 'ke', 'le': 'le', 'me': 'me',
+        'ne': 'ne', 'pe': 'pe', 're': 're', 'se': 'se', 'te': 'te',
+        've': 've', 'ze': 'ze',
+
+        // Syllabes avec I
+        'bi': 'bi', 'ci': 'si', 'di': 'di', 'fi': 'fi', 'gi': 'ji',
+        'hi': 'i', 'ji': 'ji', 'ki': 'ki', 'li': 'li', 'mi': 'mi',
+        'ni': 'ni', 'pi': 'pi', 'ri': 'ri', 'si': 'si', 'ti': 'ti',
+        'vi': 'vi', 'zi': 'zi',
+
+        // Syllabes avec O
+        'bo': 'bo', 'co': 'ko', 'do': 'do', 'fo': 'fo', 'go': 'go',
+        'ho': 'o', 'jo': 'jo', 'ko': 'ko', 'lo': 'lo', 'mo': 'mo',
+        'no': 'no', 'po': 'po', 'ro': 'ro', 'so': 'so', 'to': 'to',
+        'vo': 'vo', 'zo': 'zo',
+
+        // Syllabes avec U
+        'bu': 'bu', 'cu': 'ku', 'du': 'du', 'fu': 'fu', 'gu': 'gu',
+        'hu': 'u', 'ju': 'ju', 'ku': 'ku', 'lu': 'lu', 'mu': 'mu',
+        'nu': 'nu', 'pu': 'pu', 'ru': 'ru', 'su': 'su', 'tu': 'tu',
+        'vu': 'vu', 'zu': 'zu',
+
+        // Syllabes CVC (Consonne-Voyelle-Consonne) pour les mots
+        'man': 'man', 'mon': 'mon', 'men': 'men',
+        'dan': 'dan', 'don': 'don', 'den': 'den',
+        'lan': 'lan', 'lon': 'lon', 'len': 'len',
+        'pas': 'pas', 'par': 'par', 'sol': 'sol', 'sur': 'sur',
+        'fin': 'fin', 'fon': 'fon', 'fil': 'fil'
+    };
+
+    /**
+     * CLASSIFICATION DES LETTRES
+     */
+    const CONSONANTS = ['b','c','d','f','g','h','j','k','l','m','n','p','q','r','s','t','v','w','x','z'];
+    const VOWELS = ['a','e','i','o','u','y'];
+
+    /**
+     * Détermine si deux lettres forment une vraie syllabe française
+     */
+    const isValidSyllable = (letter1, letter2) => {
+        const combo1 = letter1.toLowerCase() + letter2.toLowerCase();
+        const combo2 = letter2.toLowerCase() + letter1.toLowerCase();
+
+        return FRENCH_SYLLABLES[combo1] || FRENCH_SYLLABLES[combo2];
+    };
+
+    /**
+     * Forme la syllabe dans le bon ordre (consonne + voyelle)
+     */
+    const createSyllable = (letter1, letter2) => {
+        const l1 = letter1.toLowerCase();
+        const l2 = letter2.toLowerCase();
+
+        // Consonne + Voyelle = ordre correct
+        if (CONSONANTS.includes(l1) && VOWELS.includes(l2)) {
+            return l1 + l2;
+        }
+        // Voyelle + Consonne = inverser
+        if (VOWELS.includes(l1) && CONSONANTS.includes(l2)) {
+            return l2 + l1;
+        }
+        // Cas ambigus : garder l'ordre d'approche
+        return l1 + l2;
+    };
+
+    /**
+     * Génère la palette de lettres avec bonhommes colorés
      */
     const createLetterPalette = () => {
         alphabet.forEach(letter => {
             const charEl = document.createElement('div');
             charEl.className = 'letter-character';
-            charEl.classList.add(colors[Math.floor(Math.random() * colors.length)]); // Random color
-            charEl.textContent = letter;
+            charEl.classList.add(colors[Math.floor(Math.random() * colors.length)]);
+            charEl.textContent = letter.toUpperCase();
             charEl.draggable = true;
-            charEl.id = `palette-${letter}`; // Original letters in palette
+            charEl.id = `palette-${letter}`;
+            charEl.dataset.letter = letter;
 
             palette.appendChild(charEl);
         });
     };
 
-    // --- Drag and Drop Event Handlers ---
-
-    // Using event delegation on the parent containers
-    document.addEventListener('dragstart', (event) => {
-        if (event.target.classList.contains('letter-character')) {
-            draggedElement = event.target;
-            // Use a timeout to allow the browser to create the drag image
-            setTimeout(() => {
-                event.target.classList.add('dragging');
-            }, 0);
+    const audioCache = {};
+    const speakPhonetic = (soundName) => {
+        if (!soundName) return;
+        if (audioCache[soundName]) {
+            audioCache[soundName].currentTime = 0;
+            audioCache[soundName].play();
+        } else {
+            const audio = new Audio(`/sounds/${soundName}.mp3`);
+            audioCache[soundName] = audio;
+            audio.play().catch(error => console.error(`Could not play sound: ${soundName}`, error));
         }
-    });
+    };
 
-    document.addEventListener('dragend', (event) => {
-        if (event.target.classList.contains('letter-character')) {
-            event.target.classList.remove('dragging');
-            draggedElement = null;
+    const triggerSyllableAnimation = (element) => {
+        element.classList.add('pulse');
+        setTimeout(() => element.classList.remove('pulse'), 1000);
+    };
+
+    const createSyllableGroup = (elements, syllable, position) => {
+        const group = document.createElement('div');
+        group.className = 'syllable-group';
+        group.dataset.syllable = syllable;
+        group.style.position = 'absolute';
+        group.style.left = `${position.x}px`;
+        group.style.top = `${position.y}px`;
+        group.draggable = true;
+        group.id = `syllable-${Date.now()}`;
+        group.style.display = 'inline-flex'; // Pour que les lettres s'alignent
+
+        elements.forEach(el => {
+            el.style.position = 'static';
+            el.draggable = false;
+            el.classList.add('in-group');
+            group.appendChild(el);
+        });
+
+        stage.appendChild(group);
+        return group;
+    };
+
+    const WORDS = { 'maman': 'maman' };
+
+    const checkSyllableCombinations = (droppedElement) => {
+        const droppedLetter = droppedElement.dataset.letter;
+        const stageElements = Array.from(stage.children);
+
+        for (const element of stageElements) {
+            if (element.id === droppedElement.id) continue;
+
+            const distance = getDistance(droppedElement, element);
+            if (distance > 120) continue;
+
+            if (element.classList.contains('syllable-group') && CONSONANTS.includes(droppedLetter)) {
+                const existingSyllable = element.dataset.syllable;
+                if (existingSyllable.length === 2) {
+                    const newSyllable = existingSyllable + droppedLetter;
+                    if (FRENCH_SYLLABLES[newSyllable]) {
+                        console.log(`Syllabe CVC détectée: ${newSyllable}`);
+                        droppedElement.style.position = 'static';
+                        element.appendChild(droppedElement);
+                        element.dataset.syllable = newSyllable;
+                        triggerSyllableAnimation(element);
+                        speakPhonetic(newSyllable);
+                        return;
+                    }
+                }
+            }
+
+            if (element.classList.contains('letter-character') && !element.classList.contains('in-group')) {
+                const staticLetter = element.dataset.letter;
+                if (isValidSyllable(staticLetter, droppedLetter)) {
+                    const syllable = createSyllable(staticLetter, droppedLetter);
+                    if (FRENCH_SYLLABLES[syllable]) {
+                        console.log(`Syllabe CV détectée: ${syllable}`);
+                        const groupPos = { x: element.offsetLeft, y: element.offsetTop };
+                        const c = CONSONANTS.includes(staticLetter) ? element : droppedElement;
+                        const v = VOWELS.includes(staticLetter) ? element : droppedElement;
+                        const group = createSyllableGroup([c, v], syllable, groupPos);
+                        triggerSyllableAnimation(group);
+                        speakPhonetic(syllable);
+                        return;
+                    }
+                }
+            }
         }
-    });
+    };
 
-    stage.addEventListener('dragover', (event) => {
-        event.preventDefault(); // Allow dropping
-    });
+    const checkWordCombinations = (droppedGroup) => {
+        const droppedSyllable = droppedGroup.dataset.syllable;
+        const stageElements = Array.from(stage.querySelectorAll('.syllable-group'));
+
+        for (const group of stageElements) {
+            if (group.id === droppedGroup.id) continue;
+
+            if (getDistance(droppedGroup, group) < 150) {
+                const staticSyllable = group.dataset.syllable;
+                const word1 = staticSyllable + droppedSyllable;
+                const word2 = droppedSyllable + staticSyllable;
+
+                if (WORDS[word1] || WORDS[word2]) {
+                    const word = WORDS[word1] ? word1 : word2;
+                    console.log(`Mot détecté: ${word}`);
+
+                    // Fusionner les groupes
+                    const allLetters = [...group.children, ...droppedGroup.children];
+                    const newPosition = { x: group.offsetLeft, y: group.offsetTop };
+
+                    const newWordGroup = createSyllableGroup(allLetters, word, newPosition);
+                    newWordGroup.classList.add('word-group');
+
+                    stage.removeChild(group);
+                    stage.removeChild(droppedGroup);
+
+                    speakPhonetic(word);
+                    triggerSyllableAnimation(newWordGroup);
+                    return;
+                }
+            }
+        }
+    };
 
     const getDistance = (elem1, elem2) => {
         const rect1 = elem1.getBoundingClientRect();
@@ -55,112 +247,65 @@ document.addEventListener('DOMContentLoaded', () => {
         return Math.sqrt(dx * dx + dy * dy);
     };
 
-    const triggerPulseAnimation = (element) => {
-        element.classList.add('pulse');
-        element.addEventListener('animationend', () => {
-            element.classList.remove('pulse');
-        }, { once: true }); // Automatically remove listener after it runs once
-    };
+    document.addEventListener('dragstart', (event) => {
+        const target = event.target;
+        if (target.classList.contains('letter-character') || target.classList.contains('syllable-group')) {
+            draggedElement = target;
+            setTimeout(() => target.classList.add('dragging'), 0);
+        }
+    });
 
-    const checkCombinations = (droppedElement) => {
-        const allCharsOnStage = stage.querySelectorAll('.letter-character');
+    document.addEventListener('dragend', () => {
+        if (draggedElement) draggedElement.classList.remove('dragging');
+        draggedElement = null;
+    });
 
-        allCharsOnStage.forEach(char => {
-            // Check against other characters, not itself.
-            if (char.id !== droppedElement.id) {
-                // And ensure the other character is not being dragged (edge case)
-                if (!char.classList.contains('dragging')) {
-                    const distance = getDistance(droppedElement, char);
-                    if (distance < 100) { // Threshold for combination
-                        const syllable = char.textContent + droppedElement.textContent;
-                        console.log(`Combination detected. Speaking syllable: ${syllable}`);
-
-                        triggerPulseAnimation(char);
-                        triggerPulseAnimation(droppedElement);
-                        speak(syllable, 'fr-FR');
-                    }
-                }
-            }
-        });
-    };
+    stage.addEventListener('dragover', (event) => event.preventDefault());
 
     stage.addEventListener('drop', (event) => {
-        console.log("Drop event fired!");
         event.preventDefault();
         if (!draggedElement) return;
 
-        let newElement;
-        if (draggedElement.id.startsWith('palette-')) {
-            newElement = draggedElement.cloneNode(true);
-            newElement.id = `char-${Date.now()}`;
-            stage.appendChild(newElement);
-        } else {
-            newElement = draggedElement;
+        const isFromPalette = draggedElement.id.startsWith('palette-');
+        let elementToDrop = draggedElement;
+
+        if (isFromPalette) {
+            elementToDrop = draggedElement.cloneNode(true);
+            elementToDrop.id = `stage-${Date.now()}`;
+            elementToDrop.dataset.letter = draggedElement.dataset.letter;
+            stage.appendChild(elementToDrop);
         }
 
         const stageRect = stage.getBoundingClientRect();
-        const x = event.clientX - stageRect.left - (newElement.offsetWidth / 2);
-        const y = event.clientY - stageRect.top - (newElement.offsetHeight / 2);
+        elementToDrop.style.position = 'absolute';
+        elementToDrop.style.left = `${event.clientX - stageRect.left - elementToDrop.offsetWidth / 2}px`;
+        elementToDrop.style.top = `${event.clientY - stageRect.top - elementToDrop.offsetHeight / 2}px`;
 
-        newElement.style.position = 'absolute';
-        newElement.style.left = `${x}px`;
-        newElement.style.top = `${y}px`;
+        if (elementToDrop.classList.contains('syllable-group')) {
+            checkWordCombinations(elementToDrop);
+        } else if (elementToDrop.classList.contains('letter-character')) {
+            checkSyllableCombinations(elementToDrop);
+        }
 
         const instructions = stage.querySelector('.instructions');
-        if (instructions) {
-            instructions.style.display = 'none';
-        }
-
-        // Check for combinations after the element is positioned
-        // Use a timeout to allow the browser to render the element at its new position
-        setTimeout(() => {
-            checkCombinations(newElement);
-        }, 0);
+        if (instructions) instructions.style.display = 'none';
     });
 
-    /**
-     * Pronounces a given text using the Web Speech API.
-     * @param {string} text - The text to speak.
-     * @param {string} lang - The language for pronunciation (e.g., 'fr-FR').
-     */
-    const speak = (text, lang = 'fr-FR') => {
-        if ('speechSynthesis' in window) {
-            // Stop any previous speech
-            window.speechSynthesis.cancel();
+    // === CLIC POUR ENTENDRE LE SON DE LA LETTRE ===
 
-            const utterance = new SpeechSynthesisUtterance(text);
-            utterance.lang = lang;
-            utterance.rate = 0.8; // Slightly slower for clarity
-            window.speechSynthesis.speak(utterance);
-        } else {
-            console.error("Web Speech API is not supported in this browser.");
-        }
-    };
-
-    /**
-     * Maps a letter to its basic phonetic sound for French.
-     * This is a simplified map.
-     */
-    const getPhoneticSound = (letter) => {
-        const phonetics = {
-            'f': 'ffff', 's': 'ssss', 'm': 'mmmm', 'r': 'rrrr', 'l': 'llll',
-            'v': 'vvvv', 'z': 'zzzz', 'j': 'jjjj',
-            // Voyelles
-            'a': 'a', 'e': 'e', 'i': 'i', 'o': 'o', 'u': 'u',
-        };
-        return phonetics[letter] || letter; // Fallback to the letter itself
-    };
-
-    // --- Click to Speak Event Handler ---
     document.addEventListener('click', (event) => {
         if (event.target.classList.contains('letter-character')) {
-            const letter = event.target.textContent;
-            const sound = getPhoneticSound(letter);
-            speak(sound, 'fr-FR');
+            // Ne pas jouer le son si la lettre est déjà dans une syllabe formée
+            if (event.target.classList.contains('connected')) {
+                return;
+            }
+            const letter = event.target.dataset.letter || event.target.textContent.toLowerCase();
+            const soundName = PHONETIC_SOUNDS[letter];
+            speakPhonetic(soundName);
         }
     });
 
-    // --- Initialization ---
+    // === INITIALISATION ===
     createLetterPalette();
 
 });
